@@ -2,11 +2,11 @@ require "rails_helper"
 
 describe CompletedFileReviewJob do
   it "is retryable" do
-    expect(RepoSynchronizationJob.new).to be_a(Retryable)
+    expect(CompletedFileReviewJob.new).to be_a(Retryable)
   end
 
   it "queue_as high" do
-    expect(RepoSynchronizationJob.new.queue_name).to eq("high")
+    expect(CompletedFileReviewJob.new.queue_name).to eq("high")
   end
 
   describe "perform" do

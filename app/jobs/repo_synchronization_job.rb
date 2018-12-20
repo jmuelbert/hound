@@ -1,5 +1,6 @@
-class RepoSynchronizationJob < ApplicationJob
-  queue_as :high
+class RepoSynchronizationJob
+  include Sidekiq::Worker
+  sidekiq_options queue: "high"
 
   def perform(user)
     synchronization = RepoSynchronization.new(user)

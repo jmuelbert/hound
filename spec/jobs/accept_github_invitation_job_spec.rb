@@ -1,14 +1,6 @@
 require "rails_helper"
 
 describe AcceptGitHubInvitationJob do
-  it "is retryable" do
-    expect(AcceptGitHubInvitationJob.new).to be_a(Retryable)
-  end
-
-  it "queue_as high" do
-    expect(AcceptGitHubInvitationJob.new.queue_name).to eq("high")
-  end
-
   describe "#perform" do
     context "when Hound has access to the repo" do
       it "doesn't need to accept the invitation" do
