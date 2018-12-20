@@ -10,7 +10,7 @@ describe RepoSyncsController, "#create" do
       post :create
 
       expect(RepoSynchronizationJob).
-        not_to have_received(:perform_async).with(user)
+        not_to have_received(:perform_async).with(user.id)
     end
   end
 
@@ -24,7 +24,7 @@ describe RepoSyncsController, "#create" do
 
       expect(user.reload).to be_refreshing_repos
       expect(RepoSynchronizationJob).
-        to have_received(:perform_async).with(user)
+        to have_received(:perform_async).with(user.id)
     end
   end
 end

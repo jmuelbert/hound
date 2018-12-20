@@ -7,7 +7,7 @@ describe RepoSynchronizationJob do
       synchronization = double(:repo_synchronization, start: nil)
       allow(RepoSynchronization).to receive(:new).and_return(synchronization)
 
-      subject.perform(user)
+      subject.perform(user.id)
 
       expect(RepoSynchronization).to have_received(:new).with(user)
       expect(synchronization).to have_received(:start)
