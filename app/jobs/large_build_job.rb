@@ -1,5 +1,6 @@
-class LargeBuildJob < ApplicationJob
-  include Buildable
+class LargeBuildJob
+  include Sidekiq::Worker
+  sidekiq_options queue: "low"
 
-  queue_as :low
+  include Buildable
 end

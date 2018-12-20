@@ -1,3 +1,5 @@
+require "sidekiq/testing"
+
 RSpec.configure do |config|
   config.around(:each, type: :feature) do |example|
     run_background_jobs_immediately do
@@ -20,7 +22,11 @@ RSpec.configure do |config|
   def run_background_jobs_immediately
     inline = Resque.inline
     Resque.inline = true
-    yield
+
+    Sidekiq::Testing.inline! do
+      yield
+    end
+
     Resque.inline = inline
   end
 end

@@ -42,7 +42,7 @@ describe BuildsController, '#create' do
 
   context 'when number of changed files is at the threshold or above' do
     it 'enqueues large build job' do
-      allow(LargeBuildJob).to receive(:perform_later)
+      allow(LargeBuildJob).to receive(:perform_async)
       payload_data = File.read(
         'spec/support/fixtures/pull_request_event_with_many_files.json'
       )
@@ -50,7 +50,7 @@ describe BuildsController, '#create' do
 
       post :create, params: { payload: payload_data }
 
-      expect(LargeBuildJob).to have_received(:perform_later).with(
+      expect(LargeBuildJob).to have_received(:perform_async).with(
         payload.build_data
       )
     end
@@ -59,12 +59,12 @@ describe BuildsController, '#create' do
   context "when payload is not for pull request" do
     it "does not schedule a job" do
       payload_data = File.read("spec/support/fixtures/push_event.json")
-      allow(LargeBuildJob).to receive(:perform_later)
+      allow(LargeBuildJob).to receive(:perform_async)
       allow(SmallBuildJob).to receive(:perform_async)
 
       post :create, params: { payload: payload_data }
 
-      expect(LargeBuildJob).not_to have_received(:perform_later)
+      expect(LargeBuildJob).not_to have_received(:perform_async)
       expect(SmallBuildJob).not_to have_received(:perform_async)
     end
   end
