@@ -1,0 +1,10 @@
+---
+:concurrency: 2
+staging:
+  :concurrency: 4
+production:
+  :concurrency: <%= Integer(ENV.fetch("SIDEKIQ_CONCURRENCY", 5)) %>
+:queues:
+  - ["high", 10]
+  - ["medium", 2]
+  - ["low", 1]

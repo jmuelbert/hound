@@ -1,5 +1,6 @@
-class SmallBuildJob < ApplicationJob
-  queue_as :medium
+class SmallBuildJob
+  include Sidekiq::Worker
+  sidekiq_options queue: "medium"
 
   include Buildable
 end
