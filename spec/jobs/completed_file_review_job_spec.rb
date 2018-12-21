@@ -1,19 +1,11 @@
 require "rails_helper"
 
 describe CompletedFileReviewJob do
-  it "is retryable" do
-    expect(CompletedFileReviewJob.new).to be_a(Retryable)
-  end
-
-  it "queue_as high" do
-    expect(CompletedFileReviewJob.new.queue_name).to eq("high")
-  end
-
   describe "perform" do
     it "calls `CompleteFileReview`" do
       allow(CompleteFileReview).to receive(:call)
 
-      CompletedFileReviewJob.perform_now(attributes)
+      subject.perform(attributes)
 
       expect(CompleteFileReview).to have_received(:call).with(attributes)
     end
@@ -26,7 +18,7 @@ describe CompletedFileReviewJob do
         expect_any_instance_of(CompletedFileReviewJob).
           to(receive(:retry_job).with(wait: 30.seconds))
 
-        CompletedFileReviewJob.perform_now(attributes)
+        subject.perform(attributes)
       end
     end
   end

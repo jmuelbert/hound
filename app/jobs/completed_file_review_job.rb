@@ -1,5 +1,6 @@
-class CompletedFileReviewJob < ApplicationJob
-  queue_as :high
+class CompletedFileReviewJob
+  include Sidekiq::Worker
+  sidekiq_options queue: "high"
 
   # The following parameters are required for this job to run.
   # filename

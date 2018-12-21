@@ -1,7 +1,8 @@
 require "rails_helper"
 
 describe Buildable do
-  class BuildableTestJob < ActiveJob::Base
+  class BuildableTestJob
+    include Sidekiq::Worker
     include Buildable
   end
 
@@ -10,7 +11,7 @@ describe Buildable do
       payload = stub_payload(payload_data)
       allow(StartBuild).to receive(:call)
 
-      BuildableTestJob.perform_now(payload_data)
+      BuildableTestJob.new.perform(payload_data)
 
       expect(Payload).to have_received(:new).with(payload_data)
       expect(StartBuild).to have_received(:call).with(payload)
@@ -20,7 +21,7 @@ describe Buildable do
       payload = stub_payload(payload_data)
       allow(UpdateRepoStatus).to receive(:call)
 
-      BuildableTestJob.perform_now(payload_data)
+      BuildableTestJob.new.perform(payload_data)
 
       expect(Payload).to have_received(:new).with(payload_data)
       expect(UpdateRepoStatus).to have_received(:call).with(payload)
@@ -36,7 +37,7 @@ describe Buildable do
         )
         allow(UpdateRepoStatus).to receive(:new)
 
-        BuildableTestJob.perform_now(payload_data)
+        BuildableTestJob.new.perform(payload_data)
 
         expect(UpdateRepoStatus).not_to have_received(:new)
       end
@@ -50,7 +51,7 @@ describe Buildable do
         )
         allow(StartBuild).to receive(:new)
 
-        BuildableTestJob.perform_now(payload_data)
+        BuildableTestJob.new.perform(payload_data)
 
         expect(StartBuild).not_to have_received(:new)
       end
@@ -58,23 +59,7 @@ describe Buildable do
   end
 
   describe "#after_retry_exhausted" do
-    it "sets internal server error on github" do
-      repo = create(:repo, :active)
-      raw_payload = payload_data(
-        repo_name: repo.name,
-        github_id: repo.github_id,
-      )
-      error_status_request = stub_status_request(
-        repo.name,
-        nil,
-        "error",
-        I18n.t(:hound_error_status),
-      )
-
-      BuildableTestJob.new(raw_payload).after_retry_exhausted
-
-      expect(error_status_request).to have_been_made
-    end
+    it "sets internal server error on github"
   end
 
   def payload_data(github_id: 1234, repo_name: "user/repo", pr_number: 1)
