@@ -22,7 +22,7 @@ Houndapp::Application.routes.draw do
     root controller: DashboardManifest::ROOT_DASHBOARD, action: :index
   end
 
-  mount Resque::Server, at: "/queue"
+  # mount Resque::Server, at: "/queue"
   mount Split::Dashboard, at: "/split"
 
   get "/auth/github/callback", to: "sessions#create"
